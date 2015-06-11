@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">APP</string>
-    <string name="host_name">raspberrypi</string>
+    <string name="host_name">app</string>
 </resources>
