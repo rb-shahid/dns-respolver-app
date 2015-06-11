@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
                 // A service was found!  Do something with it.
                 final String name = service.getServiceName();
                 String type = service.getServiceType();
-                if (type.equals(SERVICE_TYPE) && name.contains("raspberrypi")) {
+                if (type.equals(SERVICE_TYPE) && name.contains(getString(R.string.host_name))) {
                     Log.d("NSD", "Service Found @ '" + name + "'");
                     mNsdManager.resolveService(service, mResolveListener);
                 }
