@@ -1,12 +1,18 @@
 package com.byteshaft.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.AdapterView;
 
 import java.net.InetAddress;
 
@@ -18,6 +24,7 @@ public class MainActivity extends Activity {
     private NsdServiceInfo mServiceInfo;
     private String mRPiAddress;
     private WebView mWebView;
+    private boolean mIsDiscovering;
 
     // The NSD service type that the RPi exposes.
     private final String SERVICE_TYPE = "_workstation._tcp.";
@@ -26,6 +33,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (!isNetworkAvailable()) {
+            showNoInternetDialog();
+        }
         mNsdManager = (NsdManager) (getSystemService(NSD_SERVICE));
         initializeResolveListener();
         initializeDiscoveryListener();
@@ -33,6 +43,14 @@ public class MainActivity extends Activity {
         mWebView = (WebView) findViewById(R.id.web_view);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mIsDiscovering) {
+            mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+        }
     }
 
     private void initializeDiscoveryListener() {
@@ -64,6 +82,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
+                mIsDiscovering = false;
             }
 
             @Override
@@ -97,10 +116,32 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mWebView.loadUrl("http://" + mRPiAddress);
+                        mWebView.loadUrl("http://".concat(mRPiAddress));
                     }
                 });
             }
         };
+    }
+
+    private void showNoInternetDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No internet connection");
+        builder.setMessage("Make sure internet is working before starting the app.");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        builder.create();
+        builder.show();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
