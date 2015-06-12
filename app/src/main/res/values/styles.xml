@@ -2,6 +2,6 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowFullscreen">true</item>
+        <item name="android:hardwareAccelerated">true</item>
     </style>
-
 </resources>
