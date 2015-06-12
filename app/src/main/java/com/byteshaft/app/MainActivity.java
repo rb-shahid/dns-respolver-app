@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRPiAddress = "";
         mNsdManager = (NsdManager) (getSystemService(NSD_SERVICE));
         initializeResolveListener();
         initializeDiscoveryListener();
