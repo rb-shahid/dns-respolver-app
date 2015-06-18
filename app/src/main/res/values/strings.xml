@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">APP</string>
     <string name="host_name">app</string>
+    <string name="title_activity_splash">SplashActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
