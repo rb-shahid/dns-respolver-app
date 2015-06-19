@@ -37,7 +37,6 @@ public class SplashActivity extends Activity implements TextView.OnClickListener
                 Uri uri = Uri.parse("http://www.google.com");
                 Intent away = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(away);
-                System.out.println("away clicked");
                 break;
         }
     }
