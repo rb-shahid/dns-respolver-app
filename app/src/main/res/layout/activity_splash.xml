@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DD4814"
+    android:background="#E65525"
     tools:context="com.byteshaft.app.SplashActivity">
 
 
@@ -29,11 +29,10 @@
         android:text="at home"
         android:textStyle="bold"
         android:textSize="60sp"
-        android:layout_marginTop="59dp"
+        android:layout_marginTop="35dp"
         android:layout_below="@+id/you_are"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/away_text"
-        android:layout_alignStart="@+id/away_text" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/away_text"
