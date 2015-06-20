@@ -36,26 +36,27 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         if (!isNetworkAvailable()) {
             showNoInternetDialog();
-        }
-        mNsdManager = (NsdManager) (getSystemService(NSD_SERVICE));
-        initializeResolveListener();
-        initializeDiscoveryListener();
-        mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
-        mWebView = (WebView) findViewById(R.id.web_view);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
-        WebSettings webSettings = mWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!mIsResolved) {
-                    mDiscoveryListener = null;
-                    mResolveListener = null;
-                    networkNotFoundDialog();
+        } else {
+            mNsdManager = (NsdManager) (getSystemService(NSD_SERVICE));
+            initializeResolveListener();
+            initializeDiscoveryListener();
+            mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+            mWebView = (WebView) findViewById(R.id.web_view);
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
+            WebSettings webSettings = mWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!mIsResolved) {
+                        mDiscoveryListener = null;
+                        mResolveListener = null;
+                        networkNotFoundDialog();
+                    }
                 }
-            }
-        }, 5000);
+            }, 5000);
+        }
     }
 
     @Override
@@ -149,6 +150,7 @@ public class MainActivity extends Activity {
                 finish();
             }
         });
+        builder.setCancelable(false);
         builder.create();
         builder.show();
     }
