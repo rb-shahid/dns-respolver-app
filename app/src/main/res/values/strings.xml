@@ -1,4 +1,7 @@
 <resources>
+
     <string name="app_name">APP</string>
     <string name="host_name">app</string>
+    <string name="title_activity_splash">APP</string>
+
 </resources>

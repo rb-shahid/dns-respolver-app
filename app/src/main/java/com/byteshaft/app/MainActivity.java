@@ -2,7 +2,6 @@ package com.byteshaft.app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,9 +9,10 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.AdapterView;
+import android.widget.ProgressBar;
 
 import java.net.InetAddress;
 
@@ -25,7 +25,8 @@ public class MainActivity extends Activity {
     private String mRPiAddress;
     private WebView mWebView;
     private boolean mIsDiscovering;
-
+    private boolean mIsResolved;
+    private ProgressBar progressBar;
     // The NSD service type that the RPi exposes.
     private final String SERVICE_TYPE = "_workstation._tcp.";
 
@@ -41,8 +42,20 @@ public class MainActivity extends Activity {
         initializeDiscoveryListener();
         mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
         mWebView = (WebView) findViewById(R.id.web_view);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!mIsResolved) {
+                    mDiscoveryListener = null;
+                    mResolveListener = null;
+                    networkNotFoundDialog();
+                }
+            }
+        }, 5000);
     }
 
     @Override
@@ -108,6 +121,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
+                mIsResolved = true;
                 mServiceInfo = serviceInfo;
                 InetAddress host = mServiceInfo.getHost();
                 final String address = host.getHostAddress();
@@ -117,6 +131,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         mWebView.loadUrl("http://".concat(mRPiAddress));
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
             }
@@ -143,5 +158,18 @@ public class MainActivity extends Activity {
                 = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    void networkNotFoundDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("No Network Found !")
+                .setMessage("Make sure you are connected to a network.")
+                .setCancelable(false)
+                .setPositiveButton("close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.this.finish();
+                    }
+                })
+                .show();
     }
 }

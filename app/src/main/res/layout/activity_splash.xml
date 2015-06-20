@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E65525"
+    tools:context="com.byteshaft.app.SplashActivity">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="you are:"
+        android:id="@+id/you_are"
+        android:textSize="40dp"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="91dp" />
+
+    <TextView
+        android:id="@+id/at_home"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:textColor="@drawable/textselector"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="#66FFFFFF"
+        android:text="at home"
+        android:textStyle="bold"
+        android:textSize="60sp"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/you_are"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/away_text"
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@drawable/textselector"
+        android:background="#4DFFFFFF"
+        android:text="away"
+        android:textStyle="bold"
+        android:textSize="60sp"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/at_home"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
