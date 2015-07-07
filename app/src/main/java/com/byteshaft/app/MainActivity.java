@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
     private ProgressBar progressBar;
     // The NSD service type that the RPi exposes.
     private final String SERVICE_TYPE = "_workstation._tcp.";
+    private boolean mActivityShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +59,21 @@ public class MainActivity extends Activity {
                     if (!mIsResolved) {
                         mDiscoveryListener = null;
                         mResolveListener = null;
-                        networkNotFoundDialog();
+                        if (mActivityShown) {
+                            networkNotFoundDialog();
+                        } else {
+                            finish();
+                        }
                     }
                 }
             }, 5000);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mActivityShown = true;
     }
 
     @Override
@@ -80,6 +91,12 @@ public class MainActivity extends Activity {
         if (mIsDiscovering) {
             mNsdManager.stopServiceDiscovery(mDiscoveryListener);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mActivityShown = false;
     }
 
     private void initializeDiscoveryListener() {
