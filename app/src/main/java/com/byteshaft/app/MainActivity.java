@@ -3,6 +3,7 @@ package com.byteshaft.app;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.nsd.NsdManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import java.net.InetAddress;
@@ -34,18 +36,22 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mWebView = (WebView) findViewById(R.id.web_view);
+        mWebView.setWebViewClient(new CustomWebViewClient());
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        String url = getUrlFromIntent(getIntent());
         if (!isNetworkAvailable()) {
             showNoInternetDialog();
+        } else if (url != null) {
+            mWebView.loadUrl(url);
         } else {
             mNsdManager = (NsdManager) (getSystemService(NSD_SERVICE));
             initializeResolveListener();
             initializeDiscoveryListener();
             mNsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
-            mWebView = (WebView) findViewById(R.id.web_view);
             progressBar = (ProgressBar) findViewById(R.id.progressBar);
             progressBar.setVisibility(View.VISIBLE);
-            WebSettings webSettings = mWebView.getSettings();
-            webSettings.setJavaScriptEnabled(true);
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -173,5 +179,21 @@ public class MainActivity extends Activity {
                     }
                 })
                 .show();
+    }
+
+    private class CustomWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+    }
+
+    private String getUrlFromIntent(Intent intent) {
+        String url = null;
+        if (intent.getExtras() != null) {
+            url = intent.getExtras().getString("url", null);
+        }
+        return url;
     }
 }
